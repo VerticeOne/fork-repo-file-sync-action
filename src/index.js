@@ -52,6 +52,7 @@ async function run() {
 				if (existingPr && DRY_RUN === false) {
 					core.info(`Found existing PR ${ existingPr.number }`)
 					await git.setPrWarning()
+					await git.pullExistingPrBranch()
 				}
 			}
 
