@@ -128,6 +128,13 @@ export default class Git {
 		)
 	}
 
+	async pullExistingPrBranch() {
+		await execCmd(
+			`git pull --no-rebase origin ${ this.prBranch }`,
+			this.workingDir
+		)
+	}
+
 	async createPrBranch() {
 		const prefix = BRANCH_PREFIX.replace('SOURCE_REPO_NAME', GITHUB_REPOSITORY.split('/')[1])
 
