@@ -128,9 +128,29 @@ export default class Git {
 		)
 	}
 
-	async pullExistingPrBranch() {
+	async resetToExistingPrBranch() {
+		// work around shallow clone
 		await execCmd(
-			`git pull --no-rebase origin ${ this.prBranch }`,
+			`git fetch --unshallow`,
+			this.workingDir
+		)
+		await execCmd(
+			`git remote set-branches origin '*'`,
+			this.workingDir
+		)
+		// get current state of PR branch
+		await execCmd(
+			`git fetch origin ${ this.prBranch }`,
+			this.workingDir
+		)
+		// continue on top of current state
+		await execCmd(
+			`git reset --hard origin/${ this.prBranch }`,
+			this.workingDir
+		)
+		// ensure intermediate main changes included
+		await execCmd(
+			`git pull --rebase origin main`,
 			this.workingDir
 		)
 	}
