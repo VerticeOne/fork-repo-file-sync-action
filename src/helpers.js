@@ -75,7 +75,7 @@ export async function write(src, dest, context, item) {
 
 	// include current repo constants (e.g., host, user, name, branch, etc.)
 	context.repo = item.repo
-	const random = rand.create(`${ item.fullRepo } ${ src }`)
+	const random = rand.create(`${ item.repo.fullName } ${ src }`)
 	context.randHour = random.intBetween(0, 23)
 	context.randMinute = random.intBetween(0, 59)
 
