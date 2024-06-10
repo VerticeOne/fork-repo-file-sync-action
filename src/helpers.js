@@ -3,6 +3,7 @@ import readfiles from 'node-readfiles'
 import { exec } from 'child_process'
 import * as core from '@actions/core'
 import * as path from 'path'
+import * as rand from 'random-seed'
 import * as nunjucks from 'nunjucks'
 
 // From https://github.com/toniov/p-iteration/blob/master/lib/static-methods.js - MIT © Antonio V
@@ -74,6 +75,9 @@ export async function write(src, dest, context, item) {
 
 	// include current repo constants (e.g., host, user, name, branch, etc.)
 	context.repo = item.repo
+	const random = rand.create(`${ item.fullRepo } ${ src }`)
+	context.randHour = random.intBetween(0, 23)
+	context.randMinute = random.intBetween(0, 59)
 
 	const content = nunjucks.render(src, context)
 	await fs.outputFile(dest, content)
