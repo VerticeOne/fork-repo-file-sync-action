@@ -57,6 +57,7 @@ export default class Git {
 		this.existingPr = undefined
 		this.prBranch = undefined
 		this.baseBranch = undefined
+		this.isEmptyRepo = false
 
 		// Set values to current repo
 		this.repo = repo
@@ -235,10 +236,20 @@ export default class Git {
 	}
 
 	async getLastCommitSha() {
-		this.lastCommitSha = await execCmd(
-			`git log -1 --format='%H'`,
-			this.workingDir
-		)
+		try {
+			this.lastCommitSha = await execCmd(
+				`git log -1 --format='%H'`,
+				this.workingDir
+			)
+		} catch (error) {
+			if (error.message && error.message.includes('does not have any commits yet')) {
+				core.warning(`${ this.repo.fullName } has no commits on the default branch — skipping`)
+				this.lastCommitSha = null
+				this.isEmptyRepo = true
+			} else {
+				throw error
+			}
+		}
 	}
 
 	async changes(destination) { // gets array of git diffs for the destination, which either can be a file or a dict
