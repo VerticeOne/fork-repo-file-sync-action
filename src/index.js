@@ -43,6 +43,11 @@ async function run() {
 			// Clone and setup the git repository locally
 			await git.initRepo(item.repo)
 
+			if (git.isEmptyRepo) {
+				core.warning(`Skipping ${ item.repo.name }: default branch has no commits yet`)
+				return
+			}
+
 			let existingPr
 			if (SKIP_PR === false) {
 				await git.createPrBranch()
